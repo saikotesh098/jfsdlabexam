@@ -1,0 +1,161 @@
+ Create the Order Entity Class
+
+Create the `Order` entity class in the `com.klef.jfsd.exam.model` package.
+
+```java
+package com.klef.jfsd.exam.model;
+
+import javax.persistence.*;
+import java.util.Date;
+
+@Entity
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderId;
+    private String productName;
+    private int quantity;
+    private Date orderDate;
+    private String customerName;
+
+    // Getters and Setters
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+}
+```
+
+ Create the Repository Interface
+
+Create the `OrderRepository` interface in the `com.klef.jfsd.exam.repository` package.
+
+```java
+package com.klef.jfsd.exam.repository;
+
+import com.klef.jfsd.exam.model.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderRepository extends JpaRepository<Order, Long> {
+}
+ Create the Service Class
+
+Create the `OrderService` class in the `com.klef.jfsd.exam.service` package.
+
+```java
+package com.klef.jfsd.exam.service;
+
+import com.klef.jfsd.exam.model.Order;
+import com.klef.jfsd.exam.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class OrderService {
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+}
+```
+
+ Create the Controller Class
+
+Create the `OrderController` class in the `com.klef.jfsd.exam.controller` package.
+
+```java
+package com.klef.jfsd.exam.controller;
+
+import com.klef.jfsd.exam.model.Order;
+import com.klef.jfsd.exam.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/orders")
+public class OrderController {
+
+    @Autowired
+    private OrderService orderService;
+
+    @GetMapping
+    public List<Order> getAllOrders() {
+        return orderService.getAllOrders();
+    }
+}
+```
+
+
+
+Update the `application.properties` file to configure the H2 database.
+
+```properties
+spring.datasource.url=jdbc:h2:mem:labexam
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+```
+
+
+
+Use the H2 console to manually insert records. Access the console at `http://localhost:8080/h2-console` and execute the following SQL commands:
+
+```sql
+INSERT INTO ORDER (PRODUCT_NAME, QUANTITY, ORDER_DATE, CUSTOMER_NAME) VALUES ('Product A', 10, '2023-12-01', 'Customer X');
+INSERT INTO ORDER (PRODUCT_NAME, QUANTITY, ORDER_DATE, CUSTOMER_NAME) VALUES ('Product B', 5, '2023-12-02', 'Customer Y');
+INSERT INTO ORDER (PRODUCT_NAME, QUANTITY, ORDER_DATE, CUSTOMER_NAME) VALUES ('Product C', 20, '2023-12-03', 'Customer Z');
+```
+
+ Test the Application using Postman
+
+1. Run the Spring Boot application.
+2. Open Postman and send a GET request to `http://localhost:8080/orders`.
+
+You should see the list of orders returned by the API.
+
